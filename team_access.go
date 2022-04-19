@@ -98,6 +98,7 @@ type TeamAccess struct {
 	StateVersions    StateVersionsPermissionType `jsonapi:"attr,state-versions"`
 	SentinelMocks    SentinelMocksPermissionType `jsonapi:"attr,sentinel-mocks"`
 	WorkspaceLocking bool                        `jsonapi:"attr,workspace-locking"`
+	RunTasks         bool                        `jsonapi:"attr,run-tasks"`
 
 	// Relations
 	Team      *Team      `jsonapi:"relation,team"`
@@ -154,6 +155,7 @@ type TeamAccessUpdateOptions struct {
 	StateVersions    *StateVersionsPermissionType `jsonapi:"attr,state-versions,omitempty"`
 	SentinelMocks    *SentinelMocksPermissionType `jsonapi:"attr,sentinel-mocks,omitempty"`
 	WorkspaceLocking *bool                        `jsonapi:"attr,workspace-locking,omitempty"`
+	RunTasks         *bool                        `jsonapi:"attr,run-tasks,omitempty"`
 }
 
 // List all the team accesses for a given workspace.
