@@ -1161,6 +1161,40 @@ func createVariableSetVariable(t *testing.T, client *Client, vs *VariableSet, op
 	}
 }
 
+func waitForSVOutputs(t *testing.T, client *Client, svID string) {
+	t.Helper()
+	tick := time.NewTicker(2 * time.Second)
+
+	retries := 1
+	maxRetries := 5
+
+	for {
+		select {
+		case <-tick.C:
+			outputs, err := client.StateVersions.ListOutputs(context.Background(), svID, nil)
+			if err != nil {
+				t.Errorf("failed to read outputs for state version %s: %v", svID, err)
+			}
+
+			// stop the current ticker since it will be reassigned
+			// with a new ticker and duration value (backoff)
+			tick.Stop()
+
+			if len(outputs.Items) > 0 {
+				return
+			}
+
+			if retries >= maxRetries {
+				t.Errorf("Reached maximum retries to find outputs for state version %s", svID)
+				return
+			}
+
+			retries += 1
+			tick = time.NewTicker(time.Duration(2*retries) * time.Second)
+		}
+	}
+}
+
 func genSha(t *testing.T, secret, data string) string {
 	h := hmac.New(sha256.New, []byte(secret))
 	_, err := h.Write([]byte(data))
